@@ -1,6 +1,6 @@
 <template>
   <div class="allsongsheet">
-    <div>
+    <div> 
       <div class="nav-top">
         <span @click="backBtn">
           <img :src="backImg" width="30px" height="30px">
@@ -34,7 +34,7 @@ export default {
     };
   },
   created() {
-    this.axios.get("/data//top/playlist/highquality").then(response => {
+    this.axios.get("/data/top/playlist/highquality").then(response => {
       let res = response.data;
       this.highquality = res.playlists;
       // eslint-disable-next-line
