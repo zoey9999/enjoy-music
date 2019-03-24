@@ -93,6 +93,11 @@ export default new Router({
       name: 'collectmusic',
       component: () => import('./mine/CollectMusic.vue')
     },
+    {
+      path: '/mine/musicdetail',
+      name: 'musicdetail',
+      component: () => import('./mine/MusicDetail.vue')
+    },
 
 //----------------------------------------------------------------------------------------------------------
     {

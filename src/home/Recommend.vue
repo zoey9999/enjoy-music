@@ -5,7 +5,7 @@
       <div class="bgc"></div>
       <div class="carousel">
         <div class="carousel-item" v-for="(item,index) in banner" :key="index">
-          <img :src="item.imageUrl" width="290px" height="100px">
+          <img :src="item.imageUrl" width="100%" height="100%">
         </div>
       </div>
     </div>
@@ -29,13 +29,19 @@
       </div>
     </div>
 
-    <div class="recommend-list" @click="songSheet">推荐歌单
+    <div class="recommend-list" @click="songSheet">
+      推荐歌单
       <!-- <img :src=""> -->
     </div>
 
     <div class="recommend-item">
-      <div class="music-item" v-for="(item,index) in playlists" :key="index" @click="highqualityList(item)">
-        <img :src="item.coverImgUrl" width="100px" height="100px">
+      <div
+        class="music-item"
+        v-for="(item,index) in playlists"
+        :key="index"
+        @click="highqualityList(item)"
+      >
+        <img :src="item.coverImgUrl" width="98%" height="100px">
         <div class="item-name">{{item.name}}</div>
       </div>
     </div>
@@ -50,6 +56,12 @@ export default {
       playlists: [],
       banner: []
     };
+  },
+  mounted() {
+    if (this.$store.state.playing) {
+      this.$store.state.audio.play();
+      this.$store.commit("changePlaying", true);
+    }
   },
   created() {
     this.axios.get("/data/top/playlist/?limit=6&order=hot").then(response => {
@@ -75,9 +87,9 @@ export default {
     charts() {
       this.$router.push({ name: "musiccharts" });
     },
-    
-    highqualityList(params){
-      this.$router.push({name:'highqualityList',params})
+
+    highqualityList(params) {
+      this.$router.push({ name: "highqualityList", params });
     }
   }
 };
@@ -104,7 +116,7 @@ export default {
     z-index: 10;
     overflow: hidden;
     .carousel-item {
-      width: 900%;
+      width: 100%;
       height: 100px;
     }
     img {
@@ -146,7 +158,7 @@ export default {
   height: 300px;
   margin: 0 auto;
   .music-item {
-    width: 30%;
+    width: 32%;
     height: 140px;
     margin: 5px 2px;
     display: inline-table;

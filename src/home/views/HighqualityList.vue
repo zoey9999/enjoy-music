@@ -46,11 +46,18 @@
         <span class="all-num">共{{tracks.length}} 首</span>
         <div class="collect-num">+ 收藏({{ highquality.subscribedCount}})</div>
       </div>
-      <div v-for="(item,index) in tracks" :key="index" class="play-item">
+      <div
+        v-for="(item,index) in tracks"
+        :key="item.id"
+        class="play-item"
+        @click="addMusicList(tracks)"
+      >
         <div class="item-index">{{index+1}}</div>
-        <div class="play-name">
+        <div class="play-name" @click="changeMusic(item.id,index)">
+          <!-- <div  @click="changeMusic(item.al.id)"> -->
           <div class="item-name">{{item.name}}</div>
           <div class="item-ar">{{item.ar[0].name}}-{{item.al.name}}</div>
+          <!-- </div> -->
         </div>
         <div class="play-right">
           <img :src="playImg" width="20px" height="20px">
@@ -58,6 +65,8 @@
         </div>
       </div>
     </div>
+
+    <audio ref="audio"></audio>
   </div>
 </template>
 
@@ -67,9 +76,14 @@ export default {
   data() {
     return {
       tracks: [],
+      musicAudio: null,
       playImg: require("../../../public/img/akx.png"),
       backImg: require("../../../public/img/awo.png")
     };
+  },
+  mounted() {
+    this.musicAudio = this.$refs.audio;
+    this.$store.commit("getAudio", this.$refs.audio);
   },
   created() {
     this.axios
@@ -79,12 +93,61 @@ export default {
         this.playlist = res.playlist;
         this.tracks = this.playlist.tracks;
         // eslint-disable-next-line
-      //   console.log("this.tracks", this.tracks);
+        //   console.log("this.tracks", this.tracks);
       });
   },
   methods: {
+    //返回上一个路由
     backBtn() {
       this.$router.back();
+    },
+
+    //传列表到vuex
+    addMusicList(list) {
+      this.$store.commit("addMusicList", list);
+    },
+
+    //切歌，修改 vuex 中的 musicIndex
+    changeMusic(id, index) {
+      this.$store.commit("changeIndex", index);
+      // if(!this.$store.state.musicList){
+      //    this.$store.commit("changePlayListData", index);
+      // }
+     
+      this.$store.commit("changePlayingMusicId", id);
+      this.axios.get("/data/song/url?id=" + id).then(response => {
+        let musicUrl = response.data.data[0].url;
+        if (musicUrl === null) {
+          this.nextMusic();
+        }
+        this.musicAudio.src = musicUrl;
+        this.musicAudio.play();
+        this.$store.commit("changePlaying", true);
+      });
+    },
+    //播放下一首
+    nextMusic() {
+      // eslint-disable-next-line
+      console.log(
+        "this.$store.state.musicListIndex",
+        this.$store.state.musicListIndex
+      );
+      this.$store.commit("addMusicIndex");
+      let index = this.$store.state.musicListIndex;
+      let id = this.$store.state.musicList[index].id;
+      this.axios.get("/data/song/url?id=" + id).then(response => {
+        let musicUrl = response.data.data[0].url;
+        if (musicUrl === null) {
+          this.nextMusic();
+        }
+        this.$store.state.audio.src = musicUrl;
+         console.log(
+        "this.$store.state.audio.src",
+        this.$store.state.audio.src
+      );
+        this.$store.state.audio.play();
+        this.$store.commit("changePlaying", true);
+      });
     }
   },
   computed: {
@@ -161,7 +224,7 @@ export default {
   .tap-item {
     flex: 1;
     text-align: center;
-    color:white;
+    color: white;
   }
 }
 
