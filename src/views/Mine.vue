@@ -49,6 +49,7 @@
     <div class="song-sheet">
       收藏的歌单
     </div>
+    <div class="song-sheet-list">{{this.$store.state.collectlist}}</div>
   </div>
 </template>
 <script>
@@ -63,6 +64,14 @@ export default {
       collectImg:require('../../public/img/ahf.png')
     }
   },
+   created() {
+    this.axios.get("/data/top/playlist/catlist/"+this.$store.state.collectlist).then(response => {
+      // let res = response.data;
+      // this.playlists = res.playlists;
+      // eslint-disable-next-line
+      console.log("response",response);
+    })
+   },
   methods: {
     localMusic() {
       this.$router.push({path: '/mine/localmusic'})
@@ -114,6 +123,10 @@ export default {
   background-color: rgb(238, 236, 236);
   font-size: 13px;
   line-height: 30px;
+}
+.song-sheet-list{
+   width:100%;
+  height:100%;
 }
   }
 </style>

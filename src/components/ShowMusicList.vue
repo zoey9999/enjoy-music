@@ -5,7 +5,7 @@
       <div class="nav-top">
         <div class="top-play-list">播放列表({{this.$store.state.musicList.length}})</div>
         <div class="top-play-right">
-          <span>收藏全部</span>
+          <span @click="collectMusicList($store.state.musicList)">收藏全部</span>
           <span @click="clearMusicList">
             全删除
             <!-- <img :src=""  width="30px" height="30px"> -->
@@ -13,14 +13,18 @@
         </div>
       </div>
 
-      <div class="music-list" v-for="(item,index) in musicList" :key="index" ref="wrapper">
-        <div class="music-list-left" @click="changeMusic(item.id,index)">
-          <span class="music-list-name">{{item.name}}</span>
-          <span class="music-list-creator">--{{item.ar[0].name}}</span>
-        </div>
-        <div @click="removeMusic(item.id,index)">
-          删除
-          <!-- <img :src=""  width="30px" height="30px"> -->
+      <div class="wrapper-height" ref="wrapper">
+        <div>
+          <div class="music-list" v-for="(item,index) in musicList" :key="index">
+            <div class="music-list-left" @click="changeMusic(item.id,index)">
+              <span class="music-list-name">{{item.name}}</span>
+              <span class="music-list-creator">--{{item.ar[0].name}}</span>
+            </div>
+            <div @click="removeMusic(item.id,index)">
+              删除
+              <!-- <img :src=""  width="30px" height="30px"> -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -28,7 +32,6 @@
 </template>
 
 <script>
-// import BScroll from "better-scroll";
 export default {
   name: "ShowMusicList",
   data() {
@@ -36,18 +39,20 @@ export default {
       listShow: true
     };
   },
-  // mounted() {
-  //   this.$nextTick(() => {
-  //     this.scroll = new BScroll(this.$refs.wrapper, {
-  //       click: true
-  //     });
-  //   });
-  // },
+  mounted() {
+    this.$store.commit("listRef", this.$refs.wrapper);
+  },
   methods: {
     // 传值给父组件
     listMusic() {
       this.listShow = false;
       this.$emit("transform", this.listShow);
+    },
+    //收藏歌单
+    collectMusicList(list) {
+      this.$store.commit("collectMusicList", list);
+      // eslint-disable-next-line 
+      console.log('收藏歌单成功')
     },
 
     // 清除播放列表
@@ -92,7 +97,7 @@ export default {
         let musicIndex = this.$store.state.musicListIndex - 1;
         // 如果 musicIndex 等于 musicListIndex
         // eslint-disable-next-line
-        console.log("musicIndex", musicIndex);   //可打印
+        console.log("musicIndex", musicIndex); //可打印
         if (musicIndex === this.$store.state.musicListIndex) {
           // 获取 musicList 音乐列表音乐的 id
           let musicId = this.$store.state.musicList[musicIndex].id;
@@ -102,7 +107,7 @@ export default {
             let musicUrl = response.data.data[0].url;
             // 播放新音乐
             // eslint-disable-next-line
-            console.log("musicUrl", musicUrl);//打印不出来
+            console.log("musicUrl", musicUrl); //打印不出来
             this.$store.state.audio.src = musicUrl;
             this.$store.state.audio.play();
             this.$store.commit("changePlaying", true);
@@ -169,6 +174,7 @@ export default {
   .show-music-bottom {
     width: 100%;
     height: 60%;
+    overflow: hidden;
     background-color: white;
     .nav-top {
       width: 100%;
@@ -180,6 +186,12 @@ export default {
         flex: 0 0 60%;
         margin-left: 10px;
       }
+    }
+    .wrapper-height {
+      height: 400px;
+      left: 0;
+      top: 0;
+      overflow: hidden;
     }
     .music-list {
       width: 100%;

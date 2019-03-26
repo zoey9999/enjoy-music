@@ -9,10 +9,11 @@
         <router-link to="/" tag="div" class="nav-tab home"></router-link>
         <router-link to="/mv" tag="div" class="nav-tab mymv"></router-link>
       </div>
-
-      <div class="search">
-        <img :src="searchImg" width="30px" height="30px" class="search-right">
-      </div>
+      <router-link to="/search">
+        <div class="search">
+          <img :src="searchImg" width="30px" height="30px" class="search-right">
+        </div>
+      </router-link>
     </div>
     <router-view/>
 
@@ -53,16 +54,18 @@ export default {
   },
   created() {
     // 获取播放中的ID
-    this.axios
-      .get("/data/playlist/detail?id=" + this.$store.state.playingMusicId)
-      .then(response => {
-        let res = response.data;
-        this.playlist = res.playlist;
-        this.tracks = this.playlist.tracks;
-        // eslint-disable-next-line
-        console.log("this.playlist", this.playlist);
-        // console.log("this.tracks", this.tracks);
-      });
+    if (this.$store.state.playingMusicId !== null) {
+      this.axios
+        .get("/data/playlist/detail?id=" + this.$store.state.playingMusicId)
+        .then(response => {
+          let res = response.data;
+          this.playlist = res.playlist;
+          this.tracks = this.playlist.tracks;
+          // eslint-disable-next-line
+          console.log("this.playlist", this.playlist);
+          // console.log("this.tracks", this.tracks);
+        });
+    }
   },
   watch: {
     $route(e) {
@@ -96,13 +99,16 @@ export default {
     musicDetail() {
       this.$router.push({ name: "musicdetail" });
     },
+    //暂停音乐
     pauseMusic() {
-      if (this.$store.state.playing) {
-        this.$store.state.audio.pause();
-        this.$store.commit("changePlaying", false);
-      } else {
-        this.$store.state.audio.play();
-        this.$store.commit("changePlaying", true);
+      if (this.$store.state.playingMusicId !== null) {
+        if (this.$store.state.playing) {
+          this.$store.state.audio.pause();
+          this.$store.commit("changePlaying", false);
+        } else {
+          this.$store.state.audio.play();
+          this.$store.commit("changePlaying", true);
+        }
       }
     }
   },

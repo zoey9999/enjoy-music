@@ -69,6 +69,11 @@ export default new Router({
       component: () => import('./views/Mine.vue')
     },
     {
+      path: '/search',
+      name: 'search',
+      component: () => import('./views/Search.vue')
+    },
+    {
       path: '/mine/localmusic',
       name: 'localmusic',
       component: () => import('./mine/LocalMusic.vue')

@@ -55,7 +55,7 @@ export default {
     };
   },
   created() {
-    this.axios.get("/data//top/playlist/catlist").then(response => {
+    this.axios.get("/data/top/playlist/catlist").then(response => {
       let res = response.data;
       this.playlists = res.playlists;
       // eslint-disable-next-line

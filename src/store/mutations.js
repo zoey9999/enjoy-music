@@ -1,17 +1,22 @@
 export default {
-
+    listRef(state,el){
+        state.ref = el;
+    },
     // 添加 audio 元素
     getAudio(state, el) {
         state.audio = el;
     },
-
+    //收藏歌单的id
+    collectMusicList(state,id){
+        state.collectlist=id
+    },
     // 修改歌单索引
     changeIndex(state, index) {
         state.musicListIndex = index;
     },
 
     // 下一首歌单索引加 1
-    addMusicIndex(state) { 
+    addMusicIndex(state) {
         state.musicListIndex += 1;
         if (state.musicListIndex > state.musicList.length - 1) {
             state.musicListIndex = 0;
@@ -29,6 +34,7 @@ export default {
     // musicList:添加音乐列表
     addMusicList(state, list) {
         state.musicList = list;
+        localStorage.setItem("musicList",list)
     },
     // 音乐是否在播放状态
     changePlaying(state, boolean) {
@@ -46,6 +52,14 @@ export default {
                 state.musicList.splice(i, 1);
             }
         })
+    },
+    // 修改歌单数据
+    changePlayListData(state, data) {
+        state.playListData = data;
+    },
+    //搜索结果到放歌
+    searchDtail(state, id) {
+        state.playingMusicId = id;
     },
 
 
@@ -85,10 +99,6 @@ export default {
         state.reviewData = data;
     },
 
-    // 修改歌单数据
-    changePlayListData(state, data) {
-        state.playListData = data;
-    },
 
     // 修改分类名称
     changeTypeName(state, str) {

@@ -44,7 +44,7 @@
         <img :src="playImg" width="20px" height="20px">
         <span class="all-play">播放全部</span>
         <span class="all-num">共{{tracks.length}} 首</span>
-        <div class="collect-num">+ 收藏({{ highquality.subscribedCount}})</div>
+        <div class="collect-num"  @click="collectMusicList($store.state.musicList)">+ 收藏({{ highquality.subscribedCount}})</div>
       </div>
       <div
         v-for="(item,index) in tracks"
@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import BScroll from "better-scroll";
 export default {
   name: "highqualityList",
   data() {
@@ -82,24 +83,38 @@ export default {
     };
   },
   mounted() {
-    this.musicAudio = this.$refs.audio;
     this.$store.commit("getAudio", this.$refs.audio);
   },
   created() {
-    this.axios
-      .get("/data/playlist/detail?id=" + this.$route.params.id)
-      .then(response => {
-        let res = response.data;
-        this.playlist = res.playlist;
-        this.tracks = this.playlist.tracks;
-        // eslint-disable-next-line
-        //   console.log("this.tracks", this.tracks);
-      });
+    if (this.$route.params.id !== null) {
+      // eslint-disable-next-line
+      // console.log("id不等于null");
+      this.axios
+        .get("/data/playlist/detail?id=" + this.$route.params.id)
+        .then(response => {
+          let res = response.data;
+          this.playlist = res.playlist;
+          this.tracks = this.playlist.tracks;
+          if (this.$store.state.musicList !== []) {
+            this.$nextTick(() => {
+              this.scroll = new BScroll(this.$store.state.ref, {
+                click: true
+              });
+            });
+          }
+        });
+    }
   },
   methods: {
     //返回上一个路由
     backBtn() {
       this.$router.back();
+    },
+    //收藏歌单
+    collectMusicList(list) {
+      this.$store.commit("collectMusicList", list);
+      // eslint-disable-next-line 
+      console.log('收藏歌单成功')
     },
 
     //传列表到vuex
@@ -109,19 +124,20 @@ export default {
 
     //切歌，修改 vuex 中的 musicIndex
     changeMusic(id, index) {
+      this.$store.state.audio.pause();
       this.$store.commit("changeIndex", index);
       // if(!this.$store.state.musicList){
       //    this.$store.commit("changePlayListData", index);
       // }
-     
+
       this.$store.commit("changePlayingMusicId", id);
       this.axios.get("/data/song/url?id=" + id).then(response => {
         let musicUrl = response.data.data[0].url;
         if (musicUrl === null) {
           this.nextMusic();
         }
-        this.musicAudio.src = musicUrl;
-        this.musicAudio.play();
+       this.$store.state.audio.src = musicUrl;
+        this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
     },
@@ -141,10 +157,8 @@ export default {
           this.nextMusic();
         }
         this.$store.state.audio.src = musicUrl;
-         console.log(
-        "this.$store.state.audio.src",
-        this.$store.state.audio.src
-      );
+        // eslint-disable-next-line
+        console.log("this.$store.state.audio.src", this.$store.state.audio.src);
         this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
@@ -275,6 +289,9 @@ export default {
     border-bottom: 1px solid #ccc;
     width: 70%;
     flex: 0 0 65%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     .item-name {
       margin: 10px 0;
     }

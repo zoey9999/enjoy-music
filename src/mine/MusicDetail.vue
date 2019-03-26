@@ -57,6 +57,16 @@ export default {
       // b7x暂停  b7v播放 b7t下一首 b7y上一首 b8m喜欢  ayg单曲循环 ayu随机播放 ayx列表 ayf选择
     };
   },
+  created() {
+    this.axios
+      .get("/data/song/url/" + this.$store.state.playingMusicId)
+      .then(response => {
+        // let res = response.data.result;
+        // this.songsList = res.songs;
+        // eslint-disable-next-line
+        console.log("response", response);
+      });
+  },
   computed: {
     musicDetail: function() {
       return this.$route.params;
@@ -88,20 +98,23 @@ export default {
     //播放上一首
     preMusic() {
       // eslint-disable-next-line
-      console.log('this.$store.state.musicListIndex',this.$store.state.musicListIndex)
+      console.log(
+        "this.$store.state.musicListIndex",
+        this.$store.state.musicListIndex
+      );
       this.$store.commit("desMusicIndex");
       let index = this.$store.state.musicListIndex;
       let id = this.$store.state.musicList[index].id;
       this.axios.get("/data/song/url?id=" + id).then(response => {
         let musicUrl = response.data.data[0].url;
         // eslint-disable-next-line
-      console.log('musicUrl',musicUrl)
+        console.log("musicUrl", musicUrl);
         if (musicUrl === null) {
           this.prevMusic();
         }
         this.$store.state.audio.src = musicUrl;
         // eslint-disable-next-line
-      console.log('this.$store.state.audio.src',this.$store.state.audio.src)
+        console.log("this.$store.state.audio.src", this.$store.state.audio.src);
         this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
@@ -109,7 +122,10 @@ export default {
     //播放下一首
     nextMusic() {
       // eslint-disable-next-line
-      console.log('this.$store.state.musicListIndex',this.$store.state.musicListIndex)
+      console.log(
+        "this.$store.state.musicListIndex",
+        this.$store.state.musicListIndex
+      );
       this.$store.commit("addMusicIndex");
       let index = this.$store.state.musicListIndex;
       let id = this.$store.state.musicList[index].id;
@@ -119,7 +135,7 @@ export default {
           this.nextMusic();
         }
         this.$store.state.audio.src = musicUrl;
-       this.$store.state.audio.play();
+        this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
     }

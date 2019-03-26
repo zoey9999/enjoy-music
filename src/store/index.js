@@ -6,6 +6,7 @@ import mutations from './mutations'
 Vue.use(Vuex)
 
 const state = {
+    ref:null,
     // 播放器
     audio: null,
     // 音乐列表
@@ -14,6 +15,10 @@ const state = {
     playing: false,
     // 音乐列表索引
     musicListIndex: 0,
+    //收藏歌单
+    collectlist:null,
+    //搜索的结果id
+    searchDtail:null,
 
 
     endedListener: null,
