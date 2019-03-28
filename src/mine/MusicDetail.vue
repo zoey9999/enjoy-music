@@ -1,15 +1,41 @@
 <template>
-  <div>
+  <div class="all-bg">
     <div class="nav-top">
       <div @click="backBtn" class="nav-top-tab">
         <img :src="backImg" width="30px" height="30px">
       </div>
       <div>
-        <div class="nav-title">歌名</div>
-        <div class="nav-singer">歌手</div>
+        <div class="nav-title">{{this.$store.state.nowPlayingName}}</div>
+        <div class="nav-singer">{{this.$store.state.nowPlayingArname}}</div>
       </div>
     </div>
     <div class="bg"></div>
+
+    <div>
+      <div class="center-img">
+        <img :src="blackBGImg" width="250px" height="250px" class="black-bg">
+        <img
+          :src="this.$store.state.nowPlayingPicUrl"
+          width="160px"
+          height="160px"
+          class="playing-pic"
+        >
+      </div>
+      <div class="center-img-bottom">
+        <div class="center-bottom-img">
+           <img :src="likeImg" width="40px" height="40px">
+        </div>
+        <div class="center-bottom-img">
+           <img :src="likeImg" width="40px" height="40px">
+        </div>
+        <div class="center-bottom-img">
+           <img :src="likeImg" width="40px" height="40px">
+        </div>
+        <div class="center-bottom-img">
+           <img :src="likeImg" width="40px" height="40px">
+        </div>
+      </div>
+    </div>
 
     <div class="footer">
       <div class="progress-bar">进度条</div>
@@ -53,19 +79,30 @@ export default {
       playImg: require("../../public/img/b7v.png"),
       stopImg: require("../../public/img/b7x.png"),
       nextImg: require("../../public/img/b7t.png"),
-      listImg: require("../../public/img/ayx.png")
-      // b7x暂停  b7v播放 b7t下一首 b7y上一首 b8m喜欢  ayg单曲循环 ayu随机播放 ayx列表 ayf选择
+      listImg: require("../../public/img/ayx.png"),
+      likeImg: require("../../public/img/b8m.png"),
+      blackBGImg: require("../../public/img/azp.png"),
+      blackBGImg: require("../../public/img/azp.png"),
+      blackBGImg: require("../../public/img/azp.png"),
+      blackBGImg: require("../../public/img/azp.png"),
+      // b7x暂停  b7v播放 b7t下一首 b7y上一首 b8m喜欢  ayg单曲循环 ayu随机播放 ayx列表 ayf选择 azp大黑
     };
   },
+  mounted() {
+    if (this.$store.state.playing) {
+      this.$store.state.audio.play();
+      this.$store.commit("changePlaying", true);
+    }
+  },
   created() {
-    this.axios
-      .get("/data/song/url/" + this.$store.state.playingMusicId)
-      .then(response => {
-        // let res = response.data.result;
-        // this.songsList = res.songs;
-        // eslint-disable-next-line
-        console.log("response", response);
-      });
+    // this.axios
+    // .get("/data/song/url/" + this.$store.state.playingMusicId)
+    // .then(response => {
+    // let res = response.data.result;
+    // this.songsList = res.songs;
+    // eslint-disable-next-line
+    // console.log("response", response);
+    // });
   },
   computed: {
     musicDetail: function() {
@@ -146,6 +183,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.all-bg{
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+}
 .nav-top {
   position: fixed;
   display: flex;
@@ -165,12 +207,37 @@ export default {
   }
   .nav-singer {
     font-size: 12px;
-    color: rgb(97, 96, 96);
+    color: rgb(187, 187, 187);
   }
 }
 .bg {
   width: 100%;
   height: 50px;
+}
+
+.center-img {
+  width: 80%;
+  height: 40%;
+  margin: 28% auto;
+  .black-bg {
+    position: absolute;
+    z-index: 2;
+  }
+  .playing-pic {
+    z-index: 100;
+    border-radius: 50%;
+    margin: 45px 45px;
+  }
+}
+.center-img-bottom {
+  display: flex;
+  width: 80%;
+  height: 50px;
+  margin: 0 auto;
+  .center-bottom-img{
+    flex: 1;
+    border:1px solid #ccc;
+  }
 }
 
 .footer {

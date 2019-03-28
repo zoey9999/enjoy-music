@@ -9,18 +9,21 @@
         <router-link to="/" tag="div" class="nav-tab home"></router-link>
         <router-link to="/mv" tag="div" class="nav-tab mymv"></router-link>
       </div>
-      <router-link to="/search">
-        <div class="search">
+      <div class="search">
+        <router-link to="/search">
           <img :src="searchImg" width="30px" height="30px" class="search-right">
-        </div>
-      </router-link>
+        </router-link>
+      </div>
     </div>
     <router-view/>
 
-    <div class="music-footer" v-show="footShow">
-      <div class="footer-avater" @click="musicDetail">头像</div>
+    <div class="music-footer" v-show="footShow" v-if="this.$store.state.playingMusicId !== null">
+      <div class="footer-avater" @click="musicDetail">
+        <img :src="songs.al.picUrl" width="40px" height="40px" v-show="this.$store.state.playingMusicId !== null">
+      </div>
       <div class="footer-center">
-        <div class="music-name" @click="musicDetail">歌名</div>
+        <div class="music-name" @click="musicDetail">{{songs.name}}</div>
+        <div class="music-ar-name" @click="musicDetail">{{songs.ar[0].name}}</div>
       </div>
 
       <div class="footer-item" @click="pauseMusic">
@@ -42,6 +45,9 @@ export default {
   name: "app",
   data() {
     return {
+      songs:{al:{picUrl:''},name:'',ar:['']},
+      // songs:{},
+      showImg:false,
       listShow: false,
       navShow: true,
       footShow: true,
@@ -51,41 +57,6 @@ export default {
       lstImg: require("../public/img/b68.png"),
       playImg: require("../public/img/b6t.png")
     };
-  },
-  created() {
-    // 获取播放中的ID
-    if (this.$store.state.playingMusicId !== null) {
-      this.axios
-        .get("/data/playlist/detail?id=" + this.$store.state.playingMusicId)
-        .then(response => {
-          let res = response.data;
-          this.playlist = res.playlist;
-          this.tracks = this.playlist.tracks;
-          // eslint-disable-next-line
-          console.log("this.playlist", this.playlist);
-          // console.log("this.tracks", this.tracks);
-        });
-    }
-  },
-  watch: {
-    $route(e) {
-      if (
-        e.name == "home" ||
-        e.name == "mv" ||
-        e.name == "mine" ||
-        e.name == "recommend" ||
-        e.name == "friends" ||
-        e.name == "radiostation"
-      ) {
-        this.navShow = true;
-        this.footShow = true;
-      } else if (e.name == "musicdetail") {
-        this.footShow = false;
-      } else {
-        this.navShow = false;
-        this.footShow = true;
-      }
-    }
   },
   methods: {
     listMusic() {
@@ -116,6 +87,48 @@ export default {
   // playingMusicId() {
   //   return this.$store.state.playingMusicId;
   // },
+  computed: {
+    getplayingMusicId() {
+      return this.$store.state.playingMusicId;
+    }
+  },
+  watch: {
+    getplayingMusicId(playingMusicId) {
+      this.showImg=true
+      // 获取播放中的ID
+      if (this.$store.state.playingMusicId !== null) {
+        this.axios
+          .get("/data/song/detail?ids=" + this.$store.state.playingMusicId)
+          .then(response => {
+            let res = response.data;
+            this.songs = res.songs[0];
+            // eslint-disable-next-line
+            // console.log("this.songs", this.songs);
+            this.$store.commit("nowPlayingPicUrl", this.songs.al.picUrl);
+            this.$store.commit("nowPlayingName", this.songs.name);
+            this.$store.commit("nowPlayingArname", this.songs.ar[0].name);
+          });
+      }
+    },
+    $route(e) {
+      if (
+        e.name == "home" ||
+        e.name == "mv" ||
+        e.name == "mine" ||
+        e.name == "recommend" ||
+        e.name == "friends" ||
+        e.name == "radiostation"
+      ) {
+        this.navShow = true;
+        this.footShow = true;
+      } else if (e.name == "musicdetail") {
+        this.footShow = false;
+      } else {
+        this.navShow = false;
+        this.footShow = true;
+      }
+    }
+  },
   components: {
     ShowMusicList
   }
@@ -130,7 +143,11 @@ export default {
   width: 100%;
   height: 50px;
   background-color: red;
-
+  .wraper {
+    img {
+      margin: 0 10px;
+    }
+  }
   .wraper,
   .nav-center,
   .search {
@@ -200,14 +217,23 @@ export default {
 
   .footer-avater {
     flex: 0 0 60px;
-    background-color: aquamarine;
+    img {
+      margin: 8px 8px;
+    }
   }
   .footer-center {
     flex: 0 0 55%;
-    border: 1px solid #cccccc;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .music-name {
-    margin-top: 10px;
+    margin: 8px 0;
+  }
+  .music-ar-name{
+    height: 20px;
+    font-size: 13px;
+    color: rgb(97, 96, 96);
   }
   .footer-item {
     display: block;

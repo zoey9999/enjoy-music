@@ -58,11 +58,32 @@ export default {
         state.playListData = data;
     },
     //搜索结果到放歌
-    searchDtail(state, id) {
-        state.playingMusicId = id;
+    searchDtail(state, data) {
+        state.playingMusicId = data;
+    },
+    //现在播放的海报
+    nowPlayingPicUrl(state, data) {
+        state.nowPlayingPicUrl = data;
+    },
+    //现在播放的歌名
+    nowPlayingName(state, data) {
+        state.nowPlayingName = data;
+    },
+    //现在播放的歌手名
+    nowPlayingArname(state, data) {
+        state.nowPlayingArname = data;
+    },
+    //点进去的歌单列表
+    highqualityList(state, data) {
+        state.highqualityList = data;
+    },
+    //点进去的歌单id
+    highqualityListId(state, id) {
+        state.highqualityListId = id;
     },
 
 
+    
     //--------------------------------------------------------------------------------
     // 添加单曲到末尾
     pushMusic(state, song) {
@@ -87,6 +108,8 @@ export default {
     // 修改正在播放音乐的 id
     changePlayingMusicId(state, id) {
         state.playingMusicId = id;
+        // eslint-disable-next-line 
+        console.log(id)
     },
 
     // 修改排行榜音乐列表

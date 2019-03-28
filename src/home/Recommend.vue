@@ -12,19 +12,27 @@
 
     <div class="tab">
       <div class="tab-item" @click="primaryFM">
-        <div class="img-red"></div>
+        <div class="img-red">
+          <img :src="fmImg" width="50px" height="70px">
+        </div>
         <div>私人FM</div>
       </div>
       <div class="tab-item" @click="dailyRecommended">
-        <div class="img-red"></div>
+        <div class="img-red">
+          <img :src="dayImg" width="35px" height="35px">
+        </div>
         <div>每日推荐</div>
       </div>
       <div class="tab-item" @click="songSheet">
-        <div class="img-red"></div>
+        <div class="img-red">
+          <img :src="sheepImg" width="40px" height="40px">
+        </div>
         <div>歌单</div>
       </div>
       <div class="tab-item" @click="charts">
-        <div class="img-red"></div>
+        <div class="img-red">
+          <img :src="paiImg" width="40px" height="40px">
+        </div>
         <div>排行榜</div>
       </div>
     </div>
@@ -39,7 +47,7 @@
         class="music-item"
         v-for="(item,index) in playlists"
         :key="index"
-        @click="highqualityList(item)"
+        @click="highqualityList(item,item.id)"
       >
         <img :src="item.coverImgUrl" width="98%" height="100px">
         <div class="item-name">{{item.name}}</div>
@@ -54,7 +62,12 @@ export default {
   data() {
     return {
       playlists: [],
-      banner: []
+      banner: [],
+      fmImg: require("../../public/img/a7e.png"),
+      dayImg: require("../../public/img/adw.png"),
+      sheepImg: require("../../public/img/ad5.png"),
+      paiImg: require("../../public/img/abw.png")
+      // ad5歌单 a7e abw排 adw每日推荐
     };
   },
   mounted() {
@@ -88,8 +101,10 @@ export default {
       this.$router.push({ name: "musiccharts" });
     },
 
-    highqualityList(params) {
-      this.$router.push({ name: "highqualityList", params });
+    highqualityList(data,id) {
+      this.$store.commit("highqualityList", data);
+      this.$store.commit("highqualityListId", id);
+      this.$router.push({ name: "highqualityList" });
     }
   }
 };
@@ -141,6 +156,9 @@ export default {
       margin: 8px auto;
       border-radius: 50%;
       background-color: red;
+      img{
+        margin-top:5px;
+      }
     }
   }
 }

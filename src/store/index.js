@@ -19,11 +19,22 @@ const state = {
     collectlist:null,
     //搜索的结果id
     searchDtail:null,
+    // 正在播放的音乐 id
+    playingMusicId: null,
+    // 正在播放的音乐图片
+    nowPlayingPicUrl:null,
+    // 正在播放的歌名
+    nowPlayingName:null,
+    // 正在播放的歌手
+    nowPlayingArname:null,
+    //点进去的歌单列表
+    highqualityList:null,
+    //点进去的歌单id
+    highqualityListId:null,
+
 
 
     endedListener: null,
-    // 正在播放的音乐 id
-    playingMusicId: null,
     // 排行榜数据
     topListData: null,
     // 排行榜评论数据

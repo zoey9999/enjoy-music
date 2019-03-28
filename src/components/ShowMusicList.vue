@@ -51,8 +51,8 @@ export default {
     //收藏歌单
     collectMusicList(list) {
       this.$store.commit("collectMusicList", list);
-      // eslint-disable-next-line 
-      console.log('收藏歌单成功')
+      // eslint-disable-next-line
+      console.log("收藏歌单成功");
     },
 
     // 清除播放列表
@@ -202,8 +202,12 @@ export default {
       .music-list-left {
         flex: 0 0 85%;
         margin-left: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .music-list-creator {
+        display: inline-block;
         font-size: 11px;
         color: #696969;
       }

@@ -9,32 +9,32 @@
     <div class="bg"></div>
 
     <div class="songsheet-top-all">
-      <div class="songsheet-top" v-if="highquality">
+      <div class="songsheet-top" v-if="this.$store.state.highqualityList">
         <div class="songsheet-img">
-          <img :src="highquality.coverImgUrl" width="100px" height="100px" class="coverImgUrl">
+          <img :src="this.$store.state.highqualityList.coverImgUrl" width="100px" height="100px" class="coverImgUrl">
         </div>
         <div class="songsheet-tab">
-          <div class="tab-name">{{highquality.name}}</div>
-          <img :src="highquality.creator.avatarUrl" width="20px" height="20px" class="avatarUrl">
-          <div class="highquality-copywriter">{{highquality.creator.nickname}}</div>
+          <div class="tab-name">{{this.$store.state.highqualityList.name}}</div>
+          <img :src="this.$store.state.highqualityList.creator.avatarUrl" width="20px" height="20px" class="avatarUrl">
+          <div class="highquality-copywriter">{{this.$store.state.highqualityList.creator.nickname}}</div>
         </div>
       </div>
       <div class="highquality-center">
         <div class="tap-item">
           <img :src="playImg" width="20px" height="20px">
-          <div>{{highquality.commentCount}}</div>
+          <div class="tap-item-text">{{this.$store.state.highqualityList.commentCount}}</div>
         </div>
         <div class="tap-item">
-          <img :src="playImg" width="20px" height="20px">
-          <div>{{highquality.shareCount}}</div>
+          <img :src="shareImg" width="20px" height="20px">
+          <div class="tap-item-text">{{this.$store.state.highqualityList.shareCount}}</div>
         </div>
         <div class="tap-item">
-          <img :src="playImg" width="20px" height="20px">
-          <div>下载</div>
+          <img :src="downImg" width="20px" height="20px">
+          <div class="tap-item-text">下载</div>
         </div>
         <div class="tap-item">
-          <img :src="playImg" width="20px" height="20px">
-          <div>多选</div>
+          <img :src="selectImg" width="20px" height="20px">
+          <div class="tap-item-text">多选</div>
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@
         <img :src="playImg" width="20px" height="20px">
         <span class="all-play">播放全部</span>
         <span class="all-num">共{{tracks.length}} 首</span>
-        <div class="collect-num"  @click="collectMusicList($store.state.musicList)">+ 收藏({{ highquality.subscribedCount}})</div>
+        <div class="collect-num"  @click="collectMusicList($store.state.musicList)">+ 收藏({{ this.$store.state.highqualityList.subscribedCount}})</div>
       </div>
       <div
         v-for="(item,index) in tracks"
@@ -60,13 +60,13 @@
           <!-- </div> -->
         </div>
         <div class="play-right">
-          <img :src="playImg" width="20px" height="20px">
-          <img :src="playImg" width="20px" height="20px">
+          <img :src="videoImg" width="25px" height="25px">
+          <img :src="rightImg" width="25px" height="25px">
         </div>
       </div>
     </div>
 
-    <audio ref="audio"></audio>
+    <audio ref="audio" ></audio>
   </div>
 </template>
 
@@ -78,19 +78,26 @@ export default {
     return {
       tracks: [],
       musicAudio: null,
-      playImg: require("../../../public/img/akx.png"),
+      playImg: require("../../../public/img/ajx.png"),
+      shareImg: require("../../../public/img/ak5.png"),
+      downImg: require("../../../public/img/ajy.png"),
+      selectImg: require("../../../public/img/ak2.png"),
+      videoImg: require("../../../public/img/b3i.png"),
+      rightImg: require("../../../public/img/akt.png"),
+      // ak5分享 ak2多选  ajy下载 b3i视频 右点akt
       backImg: require("../../../public/img/awo.png")
     };
   },
   mounted() {
-    this.$store.commit("getAudio", this.$refs.audio);
+    if(this.$store.state.audio==null){
+      this.$store.commit("getAudio", this.$refs.audio);
+    }
+    
   },
   created() {
     if (this.$route.params.id !== null) {
-      // eslint-disable-next-line
-      // console.log("id不等于null");
       this.axios
-        .get("/data/playlist/detail?id=" + this.$route.params.id)
+        .get("/data/playlist/detail?id=" + this.$store.state.highqualityListId)
         .then(response => {
           let res = response.data;
           this.playlist = res.playlist;
@@ -124,19 +131,15 @@ export default {
 
     //切歌，修改 vuex 中的 musicIndex
     changeMusic(id, index) {
-      this.$store.state.audio.pause();
       this.$store.commit("changeIndex", index);
-      // if(!this.$store.state.musicList){
-      //    this.$store.commit("changePlayListData", index);
-      // }
-
       this.$store.commit("changePlayingMusicId", id);
       this.axios.get("/data/song/url?id=" + id).then(response => {
         let musicUrl = response.data.data[0].url;
         if (musicUrl === null) {
           this.nextMusic();
+          console.log('音乐播放结束')
         }
-       this.$store.state.audio.src = musicUrl;
+        this.$store.state.audio.src = musicUrl;
         this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
@@ -164,11 +167,6 @@ export default {
       });
     }
   },
-  computed: {
-    highquality: function() {
-      return this.$route.params;
-    }
-  }
 };
 </script>
 <style lang="scss" scoped>
@@ -239,6 +237,9 @@ export default {
     flex: 1;
     text-align: center;
     color: white;
+    .tap-item-text{
+      margin-top: 5px;
+    }
   }
 }
 
@@ -261,7 +262,7 @@ export default {
     line-height: 40px;
     font-size: 13px;
     vertical-align: top;
-    color: #ccc;
+    color: rgb(145, 144, 144);
     margin-left: 10px;
   }
   .collect-num {
@@ -272,6 +273,7 @@ export default {
     background-color: red;
     color: white;
     border-radius: 10px;
+    text-align: center;
   }
 }
 
@@ -287,8 +289,8 @@ export default {
   }
   .play-name {
     border-bottom: 1px solid #ccc;
-    width: 70%;
-    flex: 0 0 65%;
+    width: 65%;
+    flex: 0 0 62%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -303,10 +305,10 @@ export default {
   }
   .play-right {
     width: 100%;
-    height: 60px;
+    height: 59px;
+    border-bottom: 1px solid #ccc;
     img {
-      margin: 20px 5px;
-      border-bottom: 1px solid #ccc;
+      margin: 15px 5px;
     }
   }
 }
