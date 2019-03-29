@@ -11,7 +11,7 @@
     </div>
     <div class="bg"></div>
 
-    <div>
+    <div class="center-all">
       <div class="center-img">
         <img :src="blackBGImg" width="250px" height="250px" class="black-bg">
         <img
@@ -22,17 +22,18 @@
         >
       </div>
       <div class="center-img-bottom">
-        <div class="center-bottom-img">
-           <img :src="likeImg" width="40px" height="40px">
+        <div class="center-bottom-img" @click="colectLike">
+          <img :src="likeImg" width="40px" height="40px" v-show="!this.islike">
+          <img :src="redLikeImg" width="50px" height="50px"  v-show="this.islike">
         </div>
         <div class="center-bottom-img">
-           <img :src="likeImg" width="40px" height="40px">
+          <img :src="downBGImg" width="25px" height="25px" class='bottom-center'>
         </div>
         <div class="center-bottom-img">
-           <img :src="likeImg" width="40px" height="40px">
+          <img :src="tolkBGImg" width="25px" height="25px" class='bottom-center'>
         </div>
         <div class="center-bottom-img">
-           <img :src="likeImg" width="40px" height="40px">
+          <img :src="rightBGImg" width="40px" height="40px">
         </div>
       </div>
     </div>
@@ -71,6 +72,7 @@ export default {
   name: "musicdetail",
   data() {
     return {
+      islike: false,
       listShow: false,
       backImg: require("../../public/img/awo.png"),
       singleImg: require("../../public/img/ayg.png"),
@@ -81,11 +83,12 @@ export default {
       nextImg: require("../../public/img/b7t.png"),
       listImg: require("../../public/img/ayx.png"),
       likeImg: require("../../public/img/b8m.png"),
+      redLikeImg: require("../../public/img/a_v.png"),
       blackBGImg: require("../../public/img/azp.png"),
-      blackBGImg: require("../../public/img/azp.png"),
-      blackBGImg: require("../../public/img/azp.png"),
-      blackBGImg: require("../../public/img/azp.png"),
-      // b7x暂停  b7v播放 b7t下一首 b7y上一首 b8m喜欢  ayg单曲循环 ayu随机播放 ayx列表 ayf选择 azp大黑
+      downBGImg: require("../../public/img/ajy.png"),
+      tolkBGImg: require("../../public/img/ajx.png"),
+      rightBGImg: require("../../public/img/ayf.png"),
+      // b7x暂停  b7v播放 b7t下一首 b7y上一首 b8m喜欢  ayg单曲循环 ayu随机播放 ayx列表 ayf选择 azp大黑 a_v红心 ajy下载 ajx评论 ayf右点
     };
   },
   mounted() {
@@ -93,16 +96,6 @@ export default {
       this.$store.state.audio.play();
       this.$store.commit("changePlaying", true);
     }
-  },
-  created() {
-    // this.axios
-    // .get("/data/song/url/" + this.$store.state.playingMusicId)
-    // .then(response => {
-    // let res = response.data.result;
-    // this.songsList = res.songs;
-    // eslint-disable-next-line
-    // console.log("response", response);
-    // });
   },
   computed: {
     musicDetail: function() {
@@ -175,6 +168,11 @@ export default {
         this.$store.state.audio.play();
         this.$store.commit("changePlaying", true);
       });
+    },
+    //收藏单首变红
+    colectLike() {
+      this.islike=!this.islike
+
     }
   },
   components: {
@@ -183,7 +181,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.all-bg{
+.all-bg {
   width: 100%;
   height: 100%;
   background-color: #ccc;
@@ -215,28 +213,37 @@ export default {
   height: 50px;
 }
 
-.center-img {
-  width: 80%;
-  height: 40%;
-  margin: 28% auto;
-  .black-bg {
-    position: absolute;
-    z-index: 2;
+.center-all {
+   width: 100%;
+   height: 400px;
+  .center-img {
+    width: 80%;
+    height: 50px;
+    margin: 25% auto;
+    .black-bg {
+      position: absolute;
+      z-index: 2;
+    }
+    .playing-pic {
+      z-index: 100;
+      border-radius: 50%;
+      margin: 45px 45px;
+      position: absolute;
+    }
   }
-  .playing-pic {
-    z-index: 100;
-    border-radius: 50%;
-    margin: 45px 45px;
-  }
-}
-.center-img-bottom {
-  display: flex;
-  width: 80%;
-  height: 50px;
-  margin: 0 auto;
-  .center-bottom-img{
-    flex: 1;
-    border:1px solid #ccc;
+  .center-img-bottom {
+    display: flex;
+    width: 80%;
+    height: 50px;
+    margin-top: 77%;
+    margin-left: 10%;
+    .center-bottom-img {
+      flex: 1;
+      border: 1px solid #ccc;
+      .bottom-center{
+        margin:7px 10px;
+      }
+    }
   }
 }
 

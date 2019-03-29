@@ -80,6 +80,8 @@ export default {
     //点进去的歌单id
     highqualityListId(state, id) {
         state.highqualityListId = id;
+        // eslint-disable-next-line
+        console.log(id)
     },
 
 

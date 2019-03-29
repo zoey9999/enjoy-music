@@ -19,19 +19,19 @@
       </div>
       <div class="tab-item" @click="dailyRecommended">
         <div class="img-red">
-          <img :src="dayImg" width="35px" height="35px">
+          <img :src="dayImg" width="30px" height="30px">
         </div>
         <div>每日推荐</div>
       </div>
       <div class="tab-item" @click="songSheet">
         <div class="img-red">
-          <img :src="sheepImg" width="40px" height="40px">
+          <img :src="sheepImg" width="35px" height="35px">
         </div>
         <div>歌单</div>
       </div>
       <div class="tab-item" @click="charts">
         <div class="img-red">
-          <img :src="paiImg" width="40px" height="40px">
+          <img :src="paiImg" width="35px" height="35px">
         </div>
         <div>排行榜</div>
       </div>
@@ -89,10 +89,10 @@ export default {
   },
   methods: {
     primaryFM() {
-      this.$router.push({ name: "primaryfm" });
+      this.$router.push({ name: "musicdetail"});
     },
     dailyRecommended() {
-      this.$router.push({ name: "dailyrecommended" });
+      this.$router.push({ name: "highqualityList" });
     },
     songSheet() {
       this.$router.push({ name: "songsheet" });

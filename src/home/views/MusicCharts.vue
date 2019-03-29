@@ -11,18 +11,20 @@
     <div class="ranking-list">官方榜</div>
 
     <div class="ranking-list-item" v-for="(item,index) in list" :key="index">
-      <div class="ranking-item">
+      <div class="ranking-item"  @click="highqualityList(item,item.id)">
         <img :src="item.coverImgUrl" width="90px" height="90px">
       </div>
-      <div class="ranking-music" v-for="(three,index) in topthree" :key="index">
-        <div class="ranking-item">{{three}}</div>
+      <div>
+        <div class="ranking-music" v-for="(three,index) in topthree" :key="index">
+          <div class="ranking-item-name">{{three[0].name}}</div>
+        </div>
       </div>
     </div>
 
     <div class="ranking-list">推荐榜</div>
 
     <div class="ranking-list-two" v-for="item in list2" :key="item.id">
-      <div class="ranking-item-two">
+      <div class="ranking-item-two"  @click="highqualityList(item,item.id)">
         <img :src="item.coverImgUrl" width="98%" height="98%">
       </div>
       <div class="ranking-music-two">{{item.name}}</div>
@@ -30,7 +32,7 @@
 
     <div class="ranking-list">全球榜</div>
     <div class="ranking-list-two" v-for="item in list3" :key="item.id">
-      <div class="ranking-item-two">
+      <div class="ranking-item-two"  @click="highqualityList(item,item.id)">
         <img :src="item.coverImgUrl" width="98%" height="98%">
       </div>
       <div class="ranking-music-two">{{item.name}}</div>
@@ -47,19 +49,9 @@ export default {
       list: [],
       list2: [],
       list3: [],
-      biaosheng: [],
-      newmusic: [],
-      personmusic: [],
-      hotmusic: [],
+      biaosheng:[],
       backImg: require("../../../public/img/awo.png"),
-      topthree: [
-        {
-          biaosheng: []
-        },
-        { newmusic: [] },
-        { personmusic: [] },
-        { hotmusic: [] }
-      ]
+      topthree: []
     };
   },
   created() {
@@ -68,37 +60,38 @@ export default {
       this.list = res.splice(0, 4);
       this.list2 = res.splice(5, 6);
       this.list3 = res.splice(11, 3);
-      // eslint-disable-next-line
-      console.log("this.list", this.list);
     }),
       this.axios.get("/data/top/list?idx=3").then(response => {
         let res = response.data.playlist;
         this.biaosheng = res.tracks.splice(0, 3);
-        // eslint-disable-next-line
-        console.log("this.biaosheng", this.biaosheng);
+        this.topthree.push(this.biaosheng);
       }),
       this.axios.get("/data/top/list?idx=0").then(response => {
         let res = response.data.playlist;
         this.newmusic = res.tracks.splice(0, 3);
-        // eslint-disable-next-line
-        console.log("this.newmusic", this.newmusic);
+        this.topthree.push(this.newmusic);
       }),
       this.axios.get("/data/top/list?idx=2").then(response => {
         let res = response.data.playlist;
         this.personmusic = res.tracks.splice(0, 3);
-        // eslint-disable-next-line
-        console.log("this.personmusic", this.personmusic);
+        this.topthree.push(this.personmusic);
       }),
       this.axios.get("/data/top/list?idx=1").then(response => {
         let res = response.data.playlist;
         this.hotmusic = res.tracks.splice(0, 3);
+        this.topthree.push(this.hotmusic);
         // eslint-disable-next-line
-        console.log("this.hotmusic", this.hotmusic);
+        // console.log("this.topthree", this.topthree);
       });
   },
   methods: {
     backBtn() {
       this.$router.back();
+    },
+     highqualityList(data,id) {
+      this.$store.commit("highqualityList", data);
+      this.$store.commit("highqualityListId", id);
+      this.$router.push({ name: "highqualityList" });
     }
   }
 };
@@ -140,8 +133,9 @@ export default {
     }
   }
   .ranking-music {
-    .ranking-music-name {
-      margin: 15px 0;
+    .ranking-item-name{
+      width: 100%;
+      margin: 7px 0;
       color: rgb(92, 91, 91);
     }
   }

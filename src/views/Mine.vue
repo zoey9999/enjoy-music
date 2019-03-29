@@ -69,7 +69,7 @@ export default {
       // let res = response.data;
       // this.playlists = res.playlists;
       // eslint-disable-next-line
-      console.log("response",response);
+      // console.log("response",response);
     })
    },
   methods: {

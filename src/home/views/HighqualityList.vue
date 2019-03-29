@@ -8,14 +8,17 @@
     </div>
     <div class="bg"></div>
 
-    <div class="songsheet-top-all">
+    <div v-if="this.$store.state.highqualityList ==null">
+      <img :src="dairyImg" width="100%" height="100px">
+    </div>
+    <div class="songsheet-top-all"  v-if="this.$store.state.highqualityList !==null">
       <div class="songsheet-top" v-if="this.$store.state.highqualityList">
         <div class="songsheet-img">
           <img :src="this.$store.state.highqualityList.coverImgUrl" width="100px" height="100px" class="coverImgUrl">
         </div>
-        <div class="songsheet-tab">
+        <div class="songsheet-tab"  v-if="this.$store.state.highqualityList.creator !==null">
           <div class="tab-name">{{this.$store.state.highqualityList.name}}</div>
-          <img :src="this.$store.state.highqualityList.creator.avatarUrl" width="20px" height="20px" class="avatarUrl">
+          <img :src="this.$store.state.highqualityList.creator.avatarUrl"  width="20px" height="20px" class="avatarUrl">
           <div class="highquality-copywriter">{{this.$store.state.highqualityList.creator.nickname}}</div>
         </div>
       </div>
@@ -44,7 +47,7 @@
         <img :src="playImg" width="20px" height="20px">
         <span class="all-play">播放全部</span>
         <span class="all-num">共{{tracks.length}} 首</span>
-        <div class="collect-num"  @click="collectMusicList($store.state.musicList)">+ 收藏({{ this.$store.state.highqualityList.subscribedCount}})</div>
+        <div class="collect-num"  @click="collectMusicList($store.state.musicList)"  v-if="this.$store.state.highqualityList !==null">+ 收藏({{ this.$store.state.highqualityList.subscribedCount}})</div>
       </div>
       <div
         v-for="(item,index) in tracks"
@@ -85,7 +88,8 @@ export default {
       videoImg: require("../../../public/img/b3i.png"),
       rightImg: require("../../../public/img/akt.png"),
       // ak5分享 ak2多选  ajy下载 b3i视频 右点akt
-      backImg: require("../../../public/img/awo.png")
+      backImg: require("../../../public/img/awo.png"),
+      dairyImg: require("../../../public/img/dairy.jpg"),
     };
   },
   mounted() {
@@ -95,13 +99,30 @@ export default {
     
   },
   created() {
-    if (this.$route.params.id !== null) {
+    if (this.$store.state.highqualityListId == null) {
+      this.axios
+        .get("/data/playlist/detail?id=2713051252")
+        .then(response => {
+          let res = response.data;
+          this.playlist = res.playlist;
+          this.tracks = this.playlist.tracks;
+          if (this.$store.state.musicList !== []) {
+            this.$nextTick(() => {
+              this.scroll = new BScroll(this.$store.state.ref, {
+                click: true
+              });
+            });
+          }
+        });
+    }else{
       this.axios
         .get("/data/playlist/detail?id=" + this.$store.state.highqualityListId)
         .then(response => {
           let res = response.data;
           this.playlist = res.playlist;
           this.tracks = this.playlist.tracks;
+           // eslint-disable-next-line
+          console.log(this.tracks)
           if (this.$store.state.musicList !== []) {
             this.$nextTick(() => {
               this.scroll = new BScroll(this.$store.state.ref, {
@@ -137,6 +158,7 @@ export default {
         let musicUrl = response.data.data[0].url;
         if (musicUrl === null) {
           this.nextMusic();
+          // eslint-disable-next-line 
           console.log('音乐播放结束')
         }
         this.$store.state.audio.src = musicUrl;
